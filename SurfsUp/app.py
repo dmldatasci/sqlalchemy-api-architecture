@@ -52,14 +52,14 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/<start><br/>"
-        f"/api/v1.0/<start>/<end><br/>"
+        f"/api/v1.0/&#60;start&#62;<br/>"
+        f"/api/v1.0/&#60;start&#62;/&#60;end&#62;<br/>"
     )
 
 
 @app.route("/api/v1.0/precipitation")
 def precipitation():
-    # Create our session (link) from Python to the DB
+    # create a session (link) from Python to the SQLite database
     session = Session(engine)
 
     """Convert the query results from your precipitation analysis (i.e. retrieve only the last 12 months of data)
@@ -86,7 +86,7 @@ def precipitation():
 
 @app.route("/api/v1.0/stations")
 def stations():
-    # Create our session (link) from Python to the DB
+    # create a session (link) from Python to the SQLite database
     session = Session(engine)
 
     """Return a JSON list of stations from the dataset."""
@@ -116,17 +116,64 @@ def stations():
 
 @app.route("/api/v1.0/tobs")
 def tobs():
-    return "Coming soon."
+    # create a session (link) from Python to the SQLite database
+    session = Session(engine)
+    
+    """Query the dates and temperature observations of the most-active station for the previous year of data.
+    Return a JSON list of temperature observations for the previous year."""
+    most_active_station = session.query(Measurement.station, func.count(Measurement.station)).\
+        group_by(Measurement.station).\
+        order_by(func.count(Measurement.station).desc()).first()[0]
+    
+    most_recent = session.query(Measurement.date).\
+        filter(Measurement.station == most_active_station).\
+        order_by(Measurement.date.desc()).first()[0]
+    
+    starting_point = (dt.datetime.strptime(most_recent, '%Y-%m-%d') - relativedelta(years=1)).strftime('%Y-%m-%d')
+    
+    tobs_data = session.query(Measurement.date, Measurement.tobs).\
+        filter(Measurement.station == most_active_station).\
+        filter(Measurement.date >= starting_point).all()
+    
+    session.close()
+    
+    # create a dictionary from each row of data and append to a list of all stations
+    all_tobs = []
+    for d, t in tobs_data:
+        
+        tobs_dict = {}
+        tobs_dict["date"] = d
+        tobs_dict["temperature"] = t
+        
+        all_tobs.append(tobs_dict)
+
+    return jsonify(all_tobs)
 
 
 @app.route("/api/v1.0/<start>")
-def start():
-    return "Coming soon."
+def start(start):
+    # create a session (link) from Python to the SQLite database
+    session = Session(engine)
+    
+    """Return a JSON list of the minimum temperature, the average temperature, and the maximum temperature for a specified start.
+    Calculate TMIN, TAVG, and TMAX for all the dates greater than or equal to the start date."""
+    
+    session.close()
+    
+    return f"{start}"
 
 
 @app.route("/api/v1.0/<start>/<end>")
-def start_end():
-    return "Coming soon."
+def start_end(start, end):
+    # create a session (link) from Python to the SQLite database
+    session = Session(engine)
+    
+    """Return a JSON list of the minimum temperature, the average temperature, and the maximum temperature for a specified start-end range.
+    Calculate TMIN, TAVG, and TMAX for the dates from the start date to the end date, inclusive."""
+    
+    session.close()
+    
+    return f"{start} and {end}."
 
 
 if __name__ == '__main__':
