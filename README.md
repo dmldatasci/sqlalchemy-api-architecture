@@ -20,9 +20,22 @@ We used Python and SQLAlchemy to do a basic climate analysis and data exploratio
 
 4. Sort the DataFrame values by "date".
 
-5. Plot the results by using the DataFrame plot method, as the following image shows:
+5. Plot the results by using the DataFrame plot method:
+
+    ![Precipitation Plot](output/prcp_plot.png)
 
 6. Print summary statistics for the precipitation data.
+
+    || Precipitation |
+    |---|---|
+    | count | 2021.000000 |
+    | mean | 0.177279 |
+    | std | 0.461190 |
+    | min | 0.000000 |
+    | 25% | 0.000000 |
+    | 50% | 0.020000 |
+    | 75% | 0.130000 |
+    | max | 6.700000 | 
 
 ### Station Analysis
 
@@ -38,6 +51,8 @@ We used Python and SQLAlchemy to do a basic climate analysis and data exploratio
     - Filter by the station that has the greatest number of observations.
     - Query the previous 12 months of TOBS data for that station.
     - Plot the results as a histogram with bins=12, as the following image shows:
+
+    ![Temperature Plot](output/tobs_hist.png)
 
 ## Part 2: Design Your Climate App
 Now we design a simple Flask API based on the queries we developed.
