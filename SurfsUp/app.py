@@ -4,11 +4,13 @@ import pandas as pd
 import datetime as dt
 from dateutil.relativedelta import relativedelta 
 
+# import sqlalchemy toolkit
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 
+# import flask and jsonify
 from flask import Flask, jsonify
 
 
@@ -16,7 +18,10 @@ from flask import Flask, jsonify
 # Database Setup
 #################################################
 
+# define relative path for the SQLite databse
 database_path = 'Resources/hawaii.sqlite'
+
+# create the engine
 engine = create_engine(f'sqlite:///{database_path}')
 
 # reflect an existing database into a new model
@@ -37,6 +42,7 @@ session = Session(bind=engine)
 # Flask Setup
 #################################################
 
+# required app setup
 app = Flask(__name__)
 
 
@@ -44,6 +50,7 @@ app = Flask(__name__)
 # Flask Routes
 #################################################
 
+# homepage
 @app.route("/")
 def welcome():
     """List all available api routes."""
@@ -121,16 +128,20 @@ def tobs():
     
     """Query the dates and temperature observations of the most-active station for the previous year of data.
     Return a JSON list of temperature observations for the previous year."""
+    # determine the most active station
     most_active_station = session.query(Measurement.station, func.count(Measurement.station)).\
         group_by(Measurement.station).\
         order_by(func.count(Measurement.station).desc()).first()[0]
     
+    # determine the most recent measurement date at that station
     most_recent = session.query(Measurement.date).\
         filter(Measurement.station == most_active_station).\
         order_by(Measurement.date.desc()).first()[0]
     
+    # define a starting point as exactly 1 year prior to most recent measurement
     starting_point = (dt.datetime.strptime(most_recent, '%Y-%m-%d') - relativedelta(years=1)).strftime('%Y-%m-%d')
     
+    # design query to retrieve all temperature observations from the starting point onward
     tobs_data = session.query(Measurement.date, Measurement.tobs).\
         filter(Measurement.station == most_active_station).\
         filter(Measurement.date >= starting_point).all()
@@ -157,10 +168,19 @@ def start(start):
     
     """Return a JSON list of the minimum temperature, the average temperature, and the maximum temperature for a specified start.
     Calculate TMIN, TAVG, and TMAX for all the dates greater than or equal to the start date."""
+    # design a query to pull min, max and avg values of temperature observations on or after the starting point
+    results = session.query(func.min(Measurement.tobs),
+                            func.max(Measurement.tobs),
+                            func.avg(Measurement.tobs)).\
+        filter(Measurement.date >= start).all()[0]
     
     session.close()
     
-    return f"{start}"
+    res_dict = {'min' : results[0],
+                'max' : results[1],
+                'avg' : results[2]}
+    
+    return jsonify(res_dict)
 
 
 @app.route("/api/v1.0/<start>/<end>")
@@ -170,10 +190,20 @@ def start_end(start, end):
     
     """Return a JSON list of the minimum temperature, the average temperature, and the maximum temperature for a specified start-end range.
     Calculate TMIN, TAVG, and TMAX for the dates from the start date to the end date, inclusive."""
+    # design a query to pull min, max and avg values of temperature observations between the starting and ending points
+    results = session.query(func.min(Measurement.tobs),
+                            func.max(Measurement.tobs),
+                            func.avg(Measurement.tobs)).\
+        filter(Measurement.date >= start).\
+        filter(Measurement.date <= end).all()[0]
     
     session.close()
     
-    return f"{start} and {end}."
+    res_dict = {'min' : results[0],
+                'max' : results[1],
+                'avg' : results[2]}
+    
+    return jsonify(res_dict)
 
 
 if __name__ == '__main__':
