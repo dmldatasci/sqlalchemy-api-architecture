@@ -1,12 +1,14 @@
 # sqlalchemy-challenge
 Module 10 submission for UC Berkeley data science bootcamp.
 
+The Flask app described in `Part 2` below is deployed at the following URL: http://dmldatasci.pythonanywhere.com/
+
 ## Part 1: Analyze and Explore the Climate Data
 We used Python and SQLAlchemy to do a basic climate analysis and data exploration of the `hawaii.sqlite` climate database. Specifically, we used SQLAlchemy ORM queries, Pandas, and Matplotlib.
 
 1. Use the SQLAlchemy create_engine() function to connect to the `hawaii.sqlite` SQLite database.
 
-2. Use the SQLAlchemy automap_base() function to reflect your tables into classes, and then save references to the classes named station and measurement.
+2. Use the SQLAlchemy automap_base() function to reflect tables into classes, and then save references to the classes named station and measurement.
 
 3. Link Python to the database by creating a SQLAlchemy session.
 
@@ -54,7 +56,7 @@ We used Python and SQLAlchemy to do a basic climate analysis and data exploratio
 
     ![Temperature Plot](output/tobs_hist.png)
 
-## Part 2: Design Your Climate App
+## Part 2: Design Climate API App
 Now we design a simple Flask API based on the queries we developed.
 
 - `\`
@@ -63,7 +65,7 @@ Now we design a simple Flask API based on the queries we developed.
 
 - `/api/v1.0/precipitation`
     - Convert the query results from our precipitation analysis (i.e. retrieve only the last 12 months of data) to a dictionary using date as the key and prcp as the value.
-    - Return the JSON representation of your dictionary.
+    - Return the JSON representation of our dictionary.
 
 - `/api/v1.0/stations`
     - Return a JSON list of stations from the dataset.
