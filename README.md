@@ -1,7 +1,9 @@
 # sqlalchemy-api-architecture
 An exercise in constructing an API containing Hawaii weather data delivered in a SQLite file. While it is never the preferred method for conducting ETL tasks due to flexibility and control constraints, it is important to understand the mechanics of ORM queries.
 
-The Flask app described in `Part 2` below is deployed at the following URL: http://dmldatasci.pythonanywhere.com/
+The Flask app described in `Part 2` below is deployed at the following URL, which displays the API directory: http://dmldatasci.pythonanywhere.com/
+
+![API Directory](/images/api_directory.png)
 
 ## Part 1: Analyze and Explore the Climate Data
 We used Python and SQLAlchemy to do a basic climate analysis and data exploration of the `hawaii.sqlite` climate database. Specifically, we used SQLAlchemy ORM queries, Pandas, and Matplotlib.
