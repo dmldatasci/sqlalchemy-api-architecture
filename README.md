@@ -1,5 +1,5 @@
-# sqlalchemy-challenge
-Module 10 submission for UC Berkeley data science bootcamp.
+# sqlalchemy-api-architecture
+An exercise in constructing an API containing Hawaii weather data delivered in a SQLite file. While it is never the preferred method for conducting ETL tasks due to flexibility and control constraints, it is important to understand the mechanics of ORM queries.
 
 The Flask app described in `Part 2` below is deployed at the following URL: http://dmldatasci.pythonanywhere.com/
 
